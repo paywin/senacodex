@@ -55,6 +55,118 @@
   color: var(--gray);
 }
 
+.welcome-section {
+  background: linear-gradient(135deg, var(--primary) 0%, #005fa3 100%);
+  color: white;
+  padding: 32px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.welcome-section h1 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.welcome-section p {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.project-card-mini {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.project-card-mini:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.project-card-mini h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  color: var(--dark);
+}
+
+.project-card-mini p {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  color: var(--gray);
+}
+
+.project-card-mini.alert {
+  border-left: 4px solid var(--danger);
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-em\ andamento {
+  background: #e3f2fd;
+  color: var(--primary);
+}
+
+.status-em\ revisão,
+.status-review {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.status-concluído {
+  background: #e8f5e9;
+  color: var(--success);
+}
+
+.status-alto {
+  background: #ffebee;
+  color: var(--danger);
+}
+
+.status-médio {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.status-baixo {
+  background: #e8f5e9;
+  color: var(--success);
+}
+
+.dashboard-student {
+  /* Estilo específico para aluno */
+}
+
+.dashboard-student .welcome-section {
+  background: linear-gradient(135deg, #0A3D91 0%, #0066cc 100%);
+}
+
+.dashboard-teacher {
+  /* Estilo específico para professor */
+}
+
+.dashboard-teacher .welcome-section {
+  background: linear-gradient(135deg, #f57c00 0%, #ff9800 100%);
+}
+
+.dashboard-coordinator {
+  /* Estilo específico para coordenador */
+}
+
+.dashboard-coordinator .welcome-section {
+  background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 100%);
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -78,4 +190,13 @@
   .stats-grid {
     grid-template-columns: 1fr;
   }
+
+  .welcome-section {
+    padding: 20px;
+  }
+
+  .welcome-section h1 {
+    font-size: 1.4rem;
+  }
 }
+

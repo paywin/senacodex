@@ -1,0 +1,45 @@
+{
+  "sampleUsers": [
+    {
+      "email": "aluno@senac.com.br",
+      "password": "Aluno@123",
+      "name": "João Silva",
+      "role": "student",
+      "description": "Usuário de exemplo - Aluno",
+      "class": "2024.1"
+    },
+    {
+      "email": "professor@senac.com.br",
+      "password": "Professor@123",
+      "name": "Maria Santos",
+      "role": "teacher",
+      "description": "Usuário de exemplo - Professor/Gestor",
+      "department": "Gestão de Projetos"
+    },
+    {
+      "email": "coordenador@senac.com.br",
+      "password": "Coordenador@123",
+      "name": "Carlos Oliveira",
+      "role": "coordinator",
+      "description": "Usuário de exemplo - Coordenador",
+      "department": "Coordenação Acadêmica"
+    }
+  ],
+  "emailTemplates": {
+    "welcome": {
+      "subject": "Bem-vindo ao SENACODEX",
+      "from": "noreply@senacodex.com.br",
+      "sampleRecipient": "aluno@senac.com.br"
+    },
+    "projectSubmission": {
+      "subject": "Nova Entrega de Projeto - SENACODEX",
+      "from": "noreply@senacodex.com.br",
+      "sampleRecipient": "professor@senac.com.br"
+    },
+    "evaluation": {
+      "subject": "Seu Projeto foi Avaliado - SENACODEX",
+      "from": "noreply@senacodex.com.br",
+      "sampleRecipient": "aluno@senac.com.br"
+    }
+  }
+}

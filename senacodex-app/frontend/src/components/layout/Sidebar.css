@@ -29,11 +29,11 @@
 }
 
 .logo-area h2 .sena {
-  color: var(--secondary);
+  color: var(--primary);
 }
 
 .logo-area h2 .codex {
-  color: var(--primary);
+  color: var(--secondary);
 }
 
 .logo-area p {

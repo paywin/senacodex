@@ -1,9 +1,19 @@
-import { useAuthStore } from '@store/index';
+import { useAuthStore } from '@/store';
 import './Header.css';
 
 interface HeaderProps {
   title: string;
   onMenuClick: () => void;
+}
+
+function getInitials(name?: string): string {
+  return name
+    ? name
+        .split(' ')
+        .map((part) => part[0])
+        .join('')
+        .toUpperCase()
+    : 'U';
 }
 
 export default function Header({ title, onMenuClick }: HeaderProps) {
@@ -12,7 +22,7 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
   return (
     <header className="header">
       <div className="header-left">
-        <button className="menu-toggle" onClick={onMenuClick}>
+        <button className="menu-toggle" onClick={onMenuClick} type="button">
           <i className="fas fa-bars"></i>
         </button>
         <div className="page-title">
@@ -26,9 +36,7 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
           <span className="notification-badge">3</span>
         </div>
         <div className="user-profile">
-          <div className="avatar">
-            {user?.name.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
-          </div>
+          <div className="avatar">{getInitials(user?.name)}</div>
           <div className="user-info">
             <div className="user-name">{user?.name || 'Usuário'}</div>
             <div className="user-role">{user?.role || 'User'}</div>

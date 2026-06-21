@@ -9,6 +9,9 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm run dev -w frontend\" \"npm run dev -w backend\"",
+    "dev:db": "docker compose up -d postgres",
+    "dev:full": "npm run dev:db && npm run dev",
+    "db:down": "docker compose down",
     "build": "npm run build -w frontend && npm run build -w backend",
     "start:frontend": "npm run dev -w frontend",
     "start:backend": "npm run dev -w backend",

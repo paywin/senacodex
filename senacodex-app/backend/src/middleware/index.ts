@@ -35,9 +35,9 @@ export function authMiddleware(
 
 export function errorMiddleware(
   err: any,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): void {
   console.error(err);
   res.status(err.status || 500).json({

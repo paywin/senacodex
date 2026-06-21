@@ -1,7 +1,9 @@
-import { Pool, PoolClient } from 'pg';
+import { Pool } from 'pg';
 import { config } from '@/config';
+import { memoryQuery, seedMemoryDatabase } from '@/config/memoryDatabase';
 
 let pool: Pool | null = null;
+let usingMemoryDatabase = false;
 
 export async function initDatabase(): Promise<void> {
   pool = new Pool({
@@ -16,8 +18,19 @@ export async function initDatabase(): Promise<void> {
     console.error('Unexpected error on idle client', err);
   });
 
-  // Create tables if they don't exist
-  await createTables();
+  try {
+    await createTables();
+  } catch (error) {
+    if (config.nodeEnv === 'production' || !isConnectionRefused(error)) {
+      throw error;
+    }
+
+    await pool.end();
+    pool = null;
+    usingMemoryDatabase = true;
+    seedMemoryDatabase();
+    console.warn('PostgreSQL indisponivel; usando banco em memoria para desenvolvimento.');
+  }
 }
 
 export async function getPool(): Promise<Pool> {
@@ -27,20 +40,25 @@ export async function getPool(): Promise<Pool> {
   return pool!;
 }
 
-export async function query(text: string, params?: any[]): Promise<any> {
-  const p = await getPool();
-  return p.query(text, params);
+export function isUsingMemoryDatabase(): boolean {
+  return usingMemoryDatabase;
 }
 
-export async function getClient(): Promise<PoolClient> {
+export async function query(text: string, params?: any[]): Promise<any> {
+  if (usingMemoryDatabase) {
+    return memoryQuery(text, params);
+  }
+
   const p = await getPool();
-  return p.connect();
+  return p.query(text, params);
 }
 
 async function createTables(): Promise<void> {
   const p = await getPool();
 
   await p.query(`
+    CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
     CREATE TABLE IF NOT EXISTS users (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       name VARCHAR(255) NOT NULL,
@@ -109,8 +127,11 @@ async function createTables(): Promise<void> {
   `);
 }
 
-export async function closeDatabase(): Promise<void> {
-  if (pool) {
-    await pool.end();
+export function isConnectionRefused(error: unknown): boolean {
+  if (!error || typeof error !== 'object' || !('errors' in error)) {
+    return (error as NodeJS.ErrnoException)?.code === 'ECONNREFUSED';
   }
+
+  const { errors } = error as { errors?: unknown[] };
+  return errors?.some((err) => (err as NodeJS.ErrnoException).code === 'ECONNREFUSED') ?? false;
 }

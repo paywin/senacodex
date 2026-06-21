@@ -1,8 +1,8 @@
 -- SENACODEX Database Schema
 -- Execute este arquivo para criar as tabelas automaticamente
 
--- Criar extensão UUID
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Criar extensão para geração de UUIDs
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- Tabela de Usuários
 CREATE TABLE IF NOT EXISTS users (

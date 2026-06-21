@@ -83,7 +83,7 @@ export async function register(req: Request, res: Response): Promise<void> {
   }
 }
 
-export async function logout(req: Request, res: Response): Promise<void> {
+export async function logout(_req: Request, res: Response): Promise<void> {
   res.json({ message: 'Logout realizado com sucesso' });
 }
 

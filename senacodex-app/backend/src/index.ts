@@ -1,11 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import { config } from '@/config';
-import { initDatabase } from '@/config/database';
-import { authMiddleware, errorMiddleware } from '@/middleware';
+import { initDatabase, isUsingMemoryDatabase, isConnectionRefused } from '@/config/database';
+import { errorMiddleware } from '@/middleware';
 import authRoutes from '@/routes/auth';
 import dashboardRoutes from '@/routes/dashboard';
 import projectRoutes from '@/routes/projects';
+import seedRoutes from '@/routes/seed';
 
 const app = express();
 
@@ -18,9 +19,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api', seedRoutes);
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.json({ status: 'OK' });
 });
 
@@ -31,14 +33,20 @@ app.use(errorMiddleware);
 async function startServer() {
   try {
     await initDatabase();
-    console.log('✓ Banco de dados conectado');
+    console.log(isUsingMemoryDatabase() ? 'Banco em memoria ativo' : 'Banco de dados conectado');
 
     app.listen(config.port, () => {
-      console.log(`✓ Servidor rodando em http://localhost:${config.port}`);
-      console.log(`✓ Ambiente: ${config.nodeEnv}`);
+      console.log(`Servidor rodando em http://localhost:${config.port}`);
+      console.log(`Ambiente: ${config.nodeEnv}`);
     });
   } catch (error) {
-    console.error('✗ Erro ao iniciar servidor:', error);
+    if (isConnectionRefused(error)) {
+      console.error('Erro ao conectar no PostgreSQL em localhost:5432.');
+      console.error('Suba o banco com "npm run dev:db" ou rode tudo com "npm run dev:full".');
+    } else {
+      console.error('Erro ao iniciar servidor:', error);
+    }
+
     process.exit(1);
   }
 }

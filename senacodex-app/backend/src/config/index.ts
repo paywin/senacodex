@@ -18,3 +18,15 @@ export const config = {
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   },
 };
+
+// Security checks: prevent running in production with insecure defaults
+if (config.nodeEnv === 'production') {
+  if (!process.env.JWT_SECRET) {
+    console.error('FATAL: JWT_SECRET is not set in production. Aborting.');
+    process.exit(1);
+  }
+  if (process.env.DB_PASSWORD === 'postgres' || !process.env.DB_PASSWORD) {
+    console.error('FATAL: DB_PASSWORD is using an insecure default in production. Aborting.');
+    process.exit(1);
+  }
+}

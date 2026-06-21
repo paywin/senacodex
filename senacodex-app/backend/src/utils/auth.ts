@@ -4,8 +4,10 @@ import { config } from '@/config';
 import type { JwtPayload } from '@/types';
 
 export function generateToken(payload: Omit<JwtPayload, 'iat' | 'exp'>): string {
+  const expiresIn = config.jwt.expiresIn as jwt.SignOptions['expiresIn'];
+
   return jwt.sign(payload, config.jwt.secret, {
-    expiresIn: config.jwt.expiresIn,
+    expiresIn,
   });
 }
 

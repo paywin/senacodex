@@ -2,31 +2,32 @@ import { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store';
 import api from '@/services/api';
-import './LoginPage.css';
+import './RegisterPage.css';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const navigate = useNavigate();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('student');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { setUser, setToken } = useAuthStore();
 
-  const handleLogin = async (e: FormEvent) => {
+  const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      const response = await api.login(email, password);
+      const response = await api.register(name, email, password, role);
       const { accessToken, user } = response.data;
 
       setToken(accessToken);
       setUser(user);
-
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao fazer login');
+      setError(err.response?.data?.message || 'Erro ao registrar usuário');
     } finally {
       setLoading(false);
     }
@@ -41,11 +42,23 @@ export default function LoginPage() {
               <span className="sena">SENAC</span>
               <span className="codex">ODEX</span>
             </h1>
-            <p>Gestão de Projetos Integradores</p>
+            <p>Crie sua conta para acessar o painel</p>
           </div>
 
-          <form onSubmit={handleLogin} className="login-form">
+          <form onSubmit={handleRegister} className="login-form">
             {error && <div className="error-message">{error}</div>}
+
+            <div className="form-group">
+              <label htmlFor="name">Nome</label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Seu nome completo"
+                required
+              />
+            </div>
 
             <div className="form-group">
               <label htmlFor="email">Email</label>
@@ -71,14 +84,23 @@ export default function LoginPage() {
               />
             </div>
 
+            <div className="form-group">
+              <label htmlFor="role">Perfil</label>
+              <select id="role" value={role} onChange={(e) => setRole(e.target.value)}>
+                <option value="student">Aluno</option>
+                <option value="teacher">Professor</option>
+                <option value="coordinator">Coordenação</option>
+              </select>
+            </div>
+
             <button type="submit" className="btn-login" disabled={loading}>
-              {loading ? 'Entrando...' : 'Entrar'}
+              {loading ? 'Registrando...' : 'Criar Conta'}
             </button>
           </form>
 
           <div className="login-footer">
             <p>
-              Não tem conta? <Link to="/register">Criar uma nova conta</Link>
+              Já tem conta? <Link to="/login">Entrar</Link>
             </p>
           </div>
         </div>

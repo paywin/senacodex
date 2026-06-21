@@ -1,163 +1,286 @@
-# SENACODEX - Sistema de Gerenciamento de Projetos Integradores
+# 📚 Documentação SENACODEX
 
-Uma aplicação full-stack moderna para gerenciamento de Projetos Integradores com React, Node.js, TypeScript e PostgreSQL.
+Sistema de Gerenciamento de Projetos Integradores — full-stack com React, Node.js, TypeScript e PostgreSQL.
 
-## 🚀 Tecnologias
+---
+
+## 📋 Índice
+
+- [Stack Tecnológico](#stack-tecnológico)
+- [Pré-requisitos](#pré-requisitos)
+- [Instalação](#instalação)
+- [Quick Start](#quick-start)
+- [Arquitetura](#arquitetura)
+- [API Endpoints](#api-endpoints)
+- [Autenticação](#autenticação)
+- [Variáveis de Ambiente](#variáveis-de-ambiente)
+- [Docker](#docker)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Troubleshooting](#troubleshooting)
+
+---
+
+## Stack Tecnológico
 
 ### Frontend
-- **React 18** com TypeScript
-- **Vite** para desenvolvimento rápido
-- **React Router** para navegação
-- **Zustand** para gerenciamento de estado
-- **Axios** para requisições HTTP
-- **CSS3** com design responsivo
+- **React 18** + TypeScript
+- **Vite** (build tool)
+- **React Router** (navegação)
+- **Zustand** (state management)
+- **Axios** (HTTP client)
+- **CSS3** puro (design responsivo)
 
 ### Backend
-- **Node.js** com TypeScript
-- **Express** para API REST
-- **PostgreSQL** como banco de dados
-- **JWT** para autenticação
-- **bcryptjs** para criptografia de senhas
+- **Node.js** + Express
+- **TypeScript**
+- **PostgreSQL**
+- **JWT** (autenticação)
+- **bcryptjs** (criptografia)
 
-## 📋 Pré-requisitos
+---
 
-- Node.js v18+
-- PostgreSQL v12+
+## Pré-requisitos
+
+- Node.js 18+
 - npm ou yarn
+- PostgreSQL 12+ instalado e rodando
+- Git (opcional)
 
-## 🔧 Instalação
+---
 
-### 1. Clone o repositório
+## Instalação
+
+### 1. Preparar o Projeto
 
 ```bash
 cd senacodex-app
+# Verifique os arquivos principais: frontend/, backend/, package.json, docker-compose.yml
 ```
 
-### 2. Setup do Backend
+### 2. Configurar o Backend
 
 ```bash
 cd backend
-
-# Instale as dependências
 npm install
+cp .env.example .env  # edite se necessário
+npm run dev           # servidor em http://localhost:3000
+```
 
-# Configure as variáveis de ambiente
-cp .env.example .env
+### 3. Configurar o Banco de Dados
 
-# Edite o arquivo .env se necessário
-nano .env
+```bash
+# Verifique se PostgreSQL está rodando
+sudo systemctl status postgresql
 
-# Compile TypeScript
-npm run build
+# Crie o banco
+sudo -u postgres psql
+CREATE DATABASE senacodex;
+\c senacodex
+# (Opcional) Execute schema.sql para criar tabelas
+\q
+```
 
-# Inicie o servidor de desenvolvimento
+### 4. Configurar o Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev  # servidor em http://localhost:5173
+```
+
+---
+
+## Quick Start
+
+### Opção 1: Desde a raiz (recomendado)
+
+```bash
+cd senacodex-app
+npm install
 npm run dev
 ```
 
-O backend estará disponível em `http://localhost:3000`
+### Opção 2: Separadamente
 
-### 3. Setup do Frontend
+**Terminal 1 — Backend:**
+```bash
+cd backend && npm run dev
+```
+
+**Terminal 2 — Frontend:**
+```bash
+cd frontend && npm run dev
+```
+
+### Opção 3: Docker
 
 ```bash
-cd ../frontend
-
-# Instale as dependências
-npm install
-
-# Inicie o servidor de desenvolvimento
-npm run dev
+docker-compose up
 ```
 
-O frontend estará disponível em `http://localhost:5173`
+### Acessar a Aplicação
 
-## 🐳 Com Docker (Opcional)
+| Serviço       | URL                          |
+|---------------|------------------------------|
+| Frontend      | http://localhost:5173        |
+| Backend API   | http://localhost:3000        |
+| Banco de Dados| localhost:5432               |
 
-```bash
-# Inicie os containers
-docker-compose up -d
+### Credenciais Padrão (teste)
 
-# Acesse o frontend em http://localhost:5173
-# O backend estará em http://localhost:3000
+- Email: `admin@example.com`
+- Senha: `admin123`
+
+> Você também pode registrar um novo usuário na tela de login.
+
+### Scripts Disponíveis
+
+| Comando                       | Descrição                          |
+|-------------------------------|------------------------------------|
+| `npm run dev`                 | Roda frontend + backend            |
+| `npm run start:frontend`      | Apenas frontend                    |
+| `npm run start:backend`       | Apenas backend                     |
+| `npm run build`               | Build frontend + backend           |
+| `npm run lint`                | Executar linter                    |
+
+#### Backend
+- `npm run dev` — servidor de desenvolvimento
+- `npm run build` — compilar TypeScript
+- `npm start` — servidor de produção
+
+#### Frontend
+- `npm run dev` — servidor de desenvolvimento (porta 5173)
+- `npm run build` — build para produção
+- `npm run preview` — preview do build
+
+---
+
+## Arquitetura
+
+### Diagrama de Fluxo
+
+```
+┌─────────────────┐     HTTP/REST/JSON     ┌──────────────────┐     SQL      ┌──────────────────┐
+│   Frontend      │◄──────────────────────►│     Backend      │◄────────────►│   PostgreSQL     │
+│   (React)       │     JWT Auth           │    (Express)     │              │    Database      │
+└─────────────────┘                        └──────────────────┘              └──────────────────┘
 ```
 
-## 📚 Estrutura do Projeto
+### Componentes Principais
 
+#### Frontend
 ```
-senacodex-app/
-├── frontend/
-│   ├── src/
-│   │   ├── components/        # Componentes React reutilizáveis
-│   │   ├── pages/            # Páginas da aplicação
-│   │   ├── services/         # Serviços de API
-│   │   ├── store/            # Zustand store (estado global)
-│   │   ├── hooks/            # Custom hooks
-│   │   ├── types/            # Tipos TypeScript
-│   │   ├── utils/            # Funções utilitárias
-│   │   ├── App.tsx           # Componente raiz
-│   │   └── main.tsx          # Ponto de entrada
-│   └── package.json
-│
-├── backend/
-│   ├── src/
-│   │   ├── controllers/      # Controladores
-│   │   ├── services/         # Lógica de negócios
-│   │   ├── routes/           # Rotas da API
-│   │   ├── middleware/       # Middlewares Express
-│   │   ├── models/           # Modelos de dados
-│   │   ├── types/            # Tipos TypeScript
-│   │   ├── utils/            # Funções utilitárias
-│   │   ├── config/           # Configurações
-│   │   └── index.ts          # Ponto de entrada
-│   └── package.json
-│
-└── docker-compose.yml
+App.tsx (Raiz)
+├── Layout (Sidebar + Header + Content)
+├── Routes (Router)
+│   ├── LoginPage (Pública)
+│   ├── DashboardPage (Protegida)
+│   ├── ProjectsPage (Protegida)
+│   ├── SubmitVersionPage (Protegida)
+│   ├── EvaluationsPage (Protegida)
+│   ├── ReportsPage (Protegida)
+│   └── RiskPanel (Protegida)
+├── Components (Reutilizáveis)
+│   ├── Sidebar
+│   ├── Header
+│   ├── StatCard
+│   └── ActivityList
+└── Services
+    └── API (Axios instance com auth)
 ```
 
-## 🔐 Autenticação
+#### Backend
+```
+src/index.ts (Inicialização)
+├── config/database.ts      (Conexão PostgreSQL)
+├── config/index.ts         (Variáveis de ambiente)
+├── middleware/              (JWT verification, error handling)
+├── routes/                 (auth, dashboard, projects)
+├── controllers/            (Lógica de requisição)
+├── services/               (Lógica de negócio + DB queries)
+├── types/index.ts          (TypeScript interfaces)
+└── utils/auth.ts           (JWT, bcrypt)
+```
 
-A aplicação usa JWT (JSON Web Tokens) para autenticação. Tokens são armazenados no localStorage e inclusos automaticamente em todas as requisições.
+### Estados da Aplicação (Zustand)
 
-### Endpoints de Autenticação
+**Auth Store:**
+```typescript
+{
+  user: User | null;
+  token: string | null;
+  isAuthenticated: () => boolean;
+}
+```
 
-- **POST** `/api/auth/register` - Registrar novo usuário
-- **POST** `/api/auth/login` - Fazer login
-- **POST** `/api/auth/logout` - Fazer logout
-- **GET** `/api/auth/profile` - Obter perfil (requer autenticação)
+**Project Store:**
+```typescript
+{
+  projects: Project[];
+  currentProject: Project | null;
+  setProjects: (projects) => void;
+  addProject: (project) => void;
+}
+```
 
-## 📡 API Endpoints
+### Segurança
+- ✅ JWT para autenticação
+- ✅ bcryptjs para hash de senhas
+- ✅ CORS configurado
+- ✅ Validação de entrada no backend
+- ✅ Proteção de rotas no frontend
+- ✅ Passwords nunca retornadas na API
+
+### Performance
+- ✅ Índices no banco de dados
+- ✅ Lazy loading de componentes
+- ✅ Connection pooling PostgreSQL
+- ✅ Caching no frontend (localStorage)
+
+---
+
+## API Endpoints
+
+### Autenticação
+| Método | Rota                    | Descrição              |
+|--------|-------------------------|------------------------|
+| POST   | `/api/auth/register`    | Registrar novo usuário |
+| POST   | `/api/auth/login`       | Fazer login            |
+| POST   | `/api/auth/logout`      | Fazer logout           |
+| GET    | `/api/auth/profile`     | Obter perfil (auth)    |
 
 ### Dashboard
-- **GET** `/api/dashboard/stats` - Estatísticas gerais
-- **GET** `/api/dashboard/activities` - Atividades recentes
-- **GET** `/api/dashboard/risk-projects` - Projetos em risco
+| Método | Rota                           | Descrição             |
+|--------|--------------------------------|-----------------------|
+| GET    | `/api/dashboard/stats`         | Estatísticas gerais   |
+| GET    | `/api/dashboard/activities`    | Atividades recentes   |
+| GET    | `/api/dashboard/risk-projects` | Projetos em risco     |
 
 ### Projetos
-- **GET** `/api/projects` - Listar todos os projetos
-- **GET** `/api/projects/:id` - Obter projeto específico
-- **POST** `/api/projects` - Criar novo projeto
+| Método | Rota                | Descrição                  |
+|--------|---------------------|----------------------------|
+| GET    | `/api/projects`     | Listar todos os projetos   |
+| GET    | `/api/projects/:id` | Obter projeto específico   |
+| POST   | `/api/projects`     | Criar novo projeto         |
+| PUT    | `/api/projects/:id` | Atualizar projeto          |
+| DELETE | `/api/projects/:id` | Deletar projeto            |
 
-## 🎨 Funcionalidades
+### Fluxo de Autenticação
 
-- ✅ Dashboard com estatísticas em tempo real
-- ✅ Gerenciamento de projetos
-- ✅ Submissão de versões
-- ✅ Sistema de avaliações
-- ✅ Painel de risco
-- ✅ Relatórios
-- ✅ Autenticação segura
-- ✅ Interface responsiva
-- ✅ Notificações
+1. Usuário submete login → `POST /api/auth/login {email, password}`
+2. Backend valida credenciais (bcrypt) e gera JWT
+3. Backend retorna `{accessToken, user}`
+4. Frontend armazena token em `localStorage`
+5. Requisições futuras incluem `Authorization: Bearer {token}`
+6. Middleware valida token em cada requisição
+7. Token inválido → status 401 → redireciona para login
 
-## 🔄 Fluxo de Desenvolvimento
+---
 
-1. **Frontend** faz requisição HTTP para **Backend**
-2. **Backend** valida dados e consulta **PostgreSQL**
-3. **Resposta** é enviada em JSON com status apropriado
-4. **Frontend** atualiza UI com dados recebidos
+## Variáveis de Ambiente
 
-## 📝 Variáveis de Ambiente
+### Backend (`.env`)
 
-### Backend (.env)
 ```env
 PORT=3000
 NODE_ENV=development
@@ -171,55 +294,151 @@ JWT_EXPIRE=24h
 CORS_ORIGIN=http://localhost:5173
 ```
 
-## 🚨 Troubleshooting
+---
 
-### Erro de conexão com banco de dados
-- Certifique-se que PostgreSQL está rodando
-- Verifique credenciais em `.env`
-- Crie o banco de dados: `createdb senacodex`
+## Docker
 
-### Frontend não conecta ao backend
-- Verifique CORS_ORIGIN em `.env` do backend
-- Certifique-se que backend está rodando em `http://localhost:3000`
-- Limpe cache do navegador
+```bash
+# Iniciar containers
+docker-compose up
+
+# Parar e remover containers
+docker-compose down
+
+# Ver logs em tempo real
+docker-compose logs -f
+```
+
+---
+
+## Estrutura do Projeto
+
+```
+senacodex-app/
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── layout/     (Header, Sidebar, Layout)
+│   │   │   └── ui/         (StatCard, ActivityList)
+│   │   ├── pages/          (Dashboard, Projects, Login, etc.)
+│   │   ├── services/       (API calls com Axios)
+│   │   ├── store/          (Zustand — estado global)
+│   │   ├── hooks/          (Custom hooks)
+│   │   ├── types/          (Interfaces TypeScript)
+│   │   ├── config/         (Navegação, etc.)
+│   │   ├── App.tsx         (Componente raiz)
+│   │   └── main.tsx        (Ponto de entrada)
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.ts
+│
+├── backend/
+│   ├── src/
+│   │   ├── routes/         (auth, dashboard, projects)
+│   │   ├── controllers/    (Lógica de requisição)
+│   │   ├── services/       (Lógica de negócio)
+│   │   ├── middleware/     (Auth, error handling)
+│   │   ├── config/         (DB, env vars)
+│   │   ├── types/          (Interfaces TypeScript)
+│   │   ├── utils/          (JWT, bcrypt)
+│   │   └── index.ts        (Ponto de entrada)
+│   ├── .env.example
+│   ├── schema.sql
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── docker-compose.yml
+├── package.json            (Raiz — scripts concurrently)
+└── README.md               (Este arquivo)
+```
+
+---
+
+## Funcionalidades
+
+- ✅ Dashboard com estatísticas em tempo real
+- ✅ Gerenciamento de projetos
+- ✅ Submissão de versões
+- ✅ Sistema de avaliações
+- ✅ Painel de risco
+- ✅ Relatórios
+- ✅ Autenticação segura (JWT)
+- ✅ Interface responsiva
+
+---
+
+## Troubleshooting
+
+### Frontend não carrega
+1. Verifique se o servidor está em `http://localhost:5173`
+2. Limpe cache do navegador (`Ctrl+Shift+Delete`)
+3. Verifique console do navegador (F12)
+
+### Backend não responde
+1. Verifique se backend está em `http://localhost:3000`
+2. Cheque variáveis de ambiente (`.env`)
+3. Verifique conexão com PostgreSQL
+
+### Erro de conexão com PostgreSQL
+```bash
+sudo systemctl status postgresql
+sudo systemctl start postgresql
+sudo -u postgres psql -c "CREATE DATABASE senacodex;"
+```
+
+### "Cannot find module pg"
+```bash
+cd backend
+rm -rf node_modules package-lock.json
+npm install
+```
 
 ### Porta já em uso
 ```bash
 # Linux/Mac
-lsof -i :3000    # Backend
-lsof -i :5173    # Frontend
+lsof -i :3000
+lsof -i :5173
 
 # Windows
 netstat -ano | findstr :3000
 netstat -ano | findstr :5173
+
+# Mate o processo e tente novamente
 ```
 
-## 📦 Build para Produção
+### Frontend não conecta ao backend
+- Verifique `CORS_ORIGIN` em `backend/.env` (deve ser `http://localhost:5173`)
+- Verifique proxy em `frontend/vite.config.ts` (deve apontar para `http://localhost:3000`)
+- Limpe cache do navegador
 
-### Frontend
+---
+
+## Build para Produção
+
 ```bash
-cd frontend
-npm run build
+# Frontend
+cd frontend && npm run build   # gera pasta dist/
+
+# Backend
+cd backend && npm run build     # compila TypeScript
 ```
 
-### Backend
-```bash
-cd backend
-npm run build
-```
+### Deploy
+- **Frontend:** Vercel / Netlify (upload da pasta `dist`)
+- **Backend:** Heroku / Railway / DigitalOcean
+- **Database:** PostgreSQL gerenciado (Heroku Postgres, AWS RDS, etc.)
 
-## 🤝 Contribuindo
+---
 
-1. Faça um Fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+## Funcionalidades Futuras
 
-## 📄 Licença
+- [ ] Testes unitários
+- [ ] Paginação nas tabelas
+- [ ] Upload de arquivos
+- [ ] Sistema de notificações em tempo real
+- [ ] Gráficos de análise
+- [ ] Deploy em produção
 
-Este projeto está sob a licença MIT.
+---
 
-## ✉️ Contato
-
-Para dúvidas ou sugestões, abra uma issue no repositório.
+> 💡 Use `npm run dev` para desenvolvimento com hot-reload. TypeScript fornece autocompletar automático. ESLint e Prettier já estão configurados. Todos os endpoints requerem autenticação JWT (exceto login/register).

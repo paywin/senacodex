@@ -22,3 +22,144 @@
   color: var(--gray);
   font-size: 0.9rem;
 }
+
+.projects-list {
+  display: grid;
+  gap: 18px;
+}
+
+.project-card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.project-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--dark);
+}
+
+.project-card p {
+  margin: 0;
+  color: var(--gray);
+  font-size: 0.95rem;
+}
+
+.project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.project-progress-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: #e9ecef;
+  overflow: hidden;
+}
+
+.project-progress-fill {
+  height: 100%;
+  background: var(--secondary);
+  border-radius: 999px;
+}
+
+.project-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--gray);
+  font-size: 0.9rem;
+  justify-content: space-between;
+}
+
+.risk-high {
+  color: #e74c3c;
+  font-weight: 700;
+}
+
+.risk-medium {
+  color: #F37021;
+  font-weight: 700;
+}
+
+.success-message {
+  background: #e6f9ed;
+  color: #1e7d3f;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border-left: 4px solid #2ecc71;
+  margin-bottom: 16px;
+}
+
+.error-message {
+  background: #ffe0e0;
+  color: var(--danger);
+  padding: 12px 14px;
+  border-radius: 8px;
+  border-left: 4px solid var(--danger);
+  margin-bottom: 16px;
+}
+
+.submit-form .form-group {
+  margin-bottom: 18px;
+}
+
+.submit-form input,
+.submit-form textarea,
+.submit-form select {
+  width: 100%;
+}
+
+.btn-login {
+  background: linear-gradient(135deg, var(--primary), #005fa3);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  margin-top: 8px;
+}
+
+.btn-login:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.btn-login:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.data-table th,
+.data-table td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table th {
+  font-weight: 700;
+  color: var(--dark);
+}
+
+@media (max-width: 768px) {
+  .project-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -1,4 +1,4 @@
-import { Activity } from '@types/index';
+import type { Activity } from '@/shared/types';
 import './ActivityList.css';
 
 interface ActivityListProps {

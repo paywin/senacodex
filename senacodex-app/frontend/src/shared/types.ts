@@ -22,36 +22,23 @@ export interface Project {
   updatedAt: string;
 }
 
-export interface ProjectVersion {
-  id: string;
-  projectId: string;
-  version: string;
-  submissionDate: string;
-  submissionTime: string;
-  grade?: number;
-  notes?: string;
-}
-
-export interface Evaluation {
-  id: string;
-  projectId: string;
-  projectName: string;
-  methodology: number;
-  results: number;
-  originality: number;
-  formatting: number;
-  feedback: string;
-  finalGrade?: number;
-  evaluatedBy: string;
-  createdAt: string;
-}
-
 export interface Activity {
   id: string;
   icon: string;
   text: string;
   time: string;
   type: 'update' | 'feedback' | 'alert' | 'deadline';
+}
+
+export interface IEvaluation {
+  id: string;
+  projectId: string;
+  projectName: string;
+  reviewer: string;
+  score: number;
+  comments: string;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  createdAt: string;
 }
 
 export interface Stats {
@@ -63,6 +50,6 @@ export interface Stats {
 
 export interface AuthToken {
   accessToken: string;
-  refreshToken: string;
+  refreshToken?: string;
   user: User;
 }
