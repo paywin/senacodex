@@ -1,0 +1,63 @@
+.activities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.activity-empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--gray);
+  font-size: 0.9rem;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 12px;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+}
+
+.activity-icon {
+  width: 32px;
+  text-align: center;
+  color: var(--secondary);
+  font-size: 1.1rem;
+}
+
+.activity-text {
+  font-size: 0.9rem;
+  color: var(--dark);
+  flex: 1;
+}
+
+.activity-time {
+  font-size: 0.7rem;
+  color: #95a5a6;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .activity-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .activity-time {
+    align-self: flex-end;
+  }
+}
