@@ -7,25 +7,37 @@ import type { Activity, Project, Stats } from '@/shared/types';
 import './DashboardPage.css';
 
 export default function DashboardPage() {
-  const { user } = useAuth();
-  const [stats, setStats] = useState<Stats | null>(null);
+  const { user, token } = useAuth();
+  const [stats, setStats] = useState<any>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [riskProjects, setRiskProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [teacherStats, setTeacherStats] = useState<any>(null);
 
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
-        const [statsRes, activitiesRes, projectsRes] = await Promise.all([
-          api.getStats(),
-          api.getActivities(),
-          api.getProjects(),
-        ]);
 
-        setStats(statsRes.data);
-        setActivities(activitiesRes.data);
-        setProjects(projectsRes.data);
+        if (user?.role && token) {
+          const roleRes = await api.get('/role-dashboard/stats', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setStats(roleRes.data.stats);
+          if (roleRes.data.riskProjects) setRiskProjects(roleRes.data.riskProjects);
+          if (roleRes.data.teacherStats) setTeacherStats(roleRes.data.teacherStats);
+        } else {
+          const [statsRes, activitiesRes, projectsRes] = await Promise.all([
+            api.getStats(),
+            api.getActivities(),
+            api.getProjects(),
+          ]);
+
+          setStats(statsRes.data);
+          setActivities(activitiesRes.data);
+          setProjects(projectsRes.data);
+        }
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       } finally {
@@ -34,7 +46,7 @@ export default function DashboardPage() {
     }
 
     fetchData();
-  }, []);
+  }, [user, token]);
 
   if (loading) {
     return <div className="dashboard loading">Carregando...</div>;
@@ -52,55 +64,39 @@ export default function DashboardPage() {
         <div className="stats-grid">
           <StatCard
             title="Meus Projetos"
-            value={projects.length}
+            value={stats?.totalProjects || 0}
             icon="fas fa-folder-open"
             color="primary"
           />
           <StatCard
-            title="Entregas Pendentes"
-            value={stats?.pendingSubmissions || 0}
-            icon="fas fa-upload"
-            color="warning"
-          />
-          <StatCard
-            title="Em Avaliação"
-            value={stats?.pendingEvaluations || 0}
-            icon="fas fa-hourglass-half"
+            title="Em Andamento"
+            value={stats?.projectsInProgress || 0}
+            icon="fas fa-hourglass-start"
             color="info"
           />
           <StatCard
-            title="Em Risco"
-            value={stats?.projectsAtRisk || 0}
-            icon="fas fa-exclamation-triangle"
-            color="danger"
+            title="Em Avaliação"
+            value={stats?.projectsUnderReview || 0}
+            icon="fas fa-hourglass-half"
+            color="warning"
+          />
+          <StatCard
+            title="Avaliações Recebidas"
+            value={stats?.evaluationsReceived || 0}
+            icon="fas fa-star"
+            color="success"
           />
         </div>
 
         <div className="dashboard-content">
           <div className="dashboard-section">
             <h2 className="section-title">
-              <i className="fas fa-list-ul"></i> Seus Projetos Recentes
+              <i className="fas fa-info-circle"></i> Resumo de Desempenho
             </h2>
-            <div className="projects-list">
-              {projects.length > 0 ? (
-                projects.slice(0, 3).map((project) => (
-                  <div key={project.id} className="project-card-mini">
-                    <h3>{project.name}</h3>
-                    <p>{project.description}</p>
-                    <span className={`status status-${project.status.toLowerCase()}`}>{project.status}</span>
-                  </div>
-                ))
-              ) : (
-                <p>Nenhum projeto disponível</p>
-              )}
+            <div className="performance-summary">
+              <p><strong>Nota Média:</strong> {stats?.averageGrade || 'N/A'}</p>
+              <p><strong>Projetos Completos:</strong> {stats?.projectsCompleted || 0}</p>
             </div>
-          </div>
-
-          <div className="dashboard-section">
-            <h2 className="section-title">
-              <i className="fas fa-bell"></i> Atividades Recentes
-            </h2>
-            <ActivityList activities={activities} />
           </div>
         </div>
       </div>
@@ -112,16 +108,22 @@ export default function DashboardPage() {
     return (
       <div className="dashboard dashboard-teacher">
         <div className="welcome-section">
-          <h1>Bem-vindo, Professor(a) {user?.name}! 👨‍🏫</h1>
-          <p>Gerencie avaliações e acompanhe projetos da turma</p>
+          <h1>Bem-vindo, Prof. {user?.name}! 👨‍🏫</h1>
+          <p>Gerencie projetos e acompanhe o desempenho dos alunos</p>
         </div>
 
         <div className="stats-grid">
           <StatCard
             title="Total de Projetos"
             value={stats?.totalProjects || 0}
-            icon="fas fa-folder-open"
+            icon="fas fa-tasks"
             color="primary"
+          />
+          <StatCard
+            title="Em Progresso"
+            value={stats?.projectsInProgress || 0}
+            icon="fas fa-spinner"
+            color="info"
           />
           <StatCard
             title="Projetos em Risco"
@@ -130,49 +132,41 @@ export default function DashboardPage() {
             color="danger"
           />
           <StatCard
-            title="Aguardando Avaliação"
-            value={stats?.pendingSubmissions || 0}
-            icon="fas fa-check-circle"
+            title="Avaliações Pendentes"
+            value={stats?.evaluationsPending || 0}
+            icon="fas fa-clipboard-check"
             color="warning"
-          />
-          <StatCard
-            title="Avaliações Concluídas"
-            value={20}
-            icon="fas fa-star"
-            color="success"
           />
         </div>
 
         <div className="dashboard-content">
           <div className="dashboard-section">
             <h2 className="section-title">
-              <i className="fas fa-tasks"></i> Projetos Aguardando Avaliação
+              <i className="fas fa-fire"></i> Projetos em Risco
             </h2>
             <div className="projects-list">
-              {projects.filter((p) => p.status === 'Em Revisão').length > 0 ? (
-                projects
-                  .filter((p) => p.status === 'Em Revisão')
-                  .map((project) => (
-                    <div key={project.id} className="project-card-mini">
+              {riskProjects && riskProjects.length > 0 ? (
+                riskProjects.slice(0, 5).map((project) => (
+                  <div key={project.id} className="project-card-mini">
+                    <div className="project-header">
                       <h3>{project.name}</h3>
-                      <p>Turma: {project.class}</p>
-                      <span className="status status-review">Aguardando Avaliação</span>
+                      <span className={`risk risk-${project.risk?.toLowerCase()}`}>{project.risk}</span>
                     </div>
-                  ))
+                    <p className="project-progress">Progresso: {project.progress}%</p>
+                  </div>
+                ))
               ) : (
-                <p>Nenhum projeto aguardando avaliação</p>
+                <p>Nenhum projeto em risco!</p>
               )}
             </div>
           </div>
 
           <div className="dashboard-section">
             <h2 className="section-title">
-              <i className="fas fa-chart-bar"></i> Resumo de Projetos
+              <i className="fas fa-chart-bar"></i> Estatísticas
             </h2>
-            <div className="projects-summary">
-              <p><strong>Em Andamento:</strong> {projects.filter((p) => p.status === 'Em Andamento').length}</p>
-              <p><strong>Em Revisão:</strong> {projects.filter((p) => p.status === 'Em Revisão').length}</p>
-              <p><strong>Concluídos:</strong> {projects.filter((p) => p.status === 'Concluído').length}</p>
+            <div className="stats-detail">
+              <p><strong>Total Avaliados:</strong> {stats?.evaluationsCompleted || 0}</p>
             </div>
           </div>
         </div>
@@ -185,69 +179,78 @@ export default function DashboardPage() {
     return (
       <div className="dashboard dashboard-coordinator">
         <div className="welcome-section">
-          <h1>Painel Administrativo - Coordenador {user?.name}! 👨‍💼</h1>
-          <p>Visão geral e controle de toda a plataforma</p>
+          <h1>Bem-vindo, Coordenador(a) {user?.name}! 👩‍💼</h1>
+          <p>Monitore turmas, professores e projetos em geral</p>
         </div>
 
         <div className="stats-grid">
           <StatCard
             title="Total de Projetos"
             value={stats?.totalProjects || 0}
-            icon="fas fa-folder-open"
+            icon="fas fa-project-diagram"
             color="primary"
           />
           <StatCard
+            title="Turmas"
+            value={stats?.totalClasses || 0}
+            icon="fas fa-graduation-cap"
+            color="info"
+          />
+          <StatCard
+            title="Projetos Excelentes"
+            value={stats?.statusStats?.excellent || 0}
+            icon="fas fa-star"
+            color="success"
+          />
+          <StatCard
             title="Projetos em Risco"
-            value={stats?.projectsAtRisk || 0}
+            value={stats?.statusStats?.low || 0}
             icon="fas fa-exclamation-triangle"
             color="danger"
-          />
-          <StatCard
-            title="Entregas Pendentes"
-            value={stats?.pendingSubmissions || 0}
-            icon="fas fa-clock"
-            color="warning"
-          />
-          <StatCard
-            title="Avaliações Pendentes"
-            value={stats?.pendingEvaluations || 0}
-            icon="fas fa-tasks"
-            color="info"
           />
         </div>
 
         <div className="dashboard-content">
           <div className="dashboard-section">
             <h2 className="section-title">
-              <i className="fas fa-exclamation-circle"></i> Alertas - Projetos em Risco
+              <i className="fas fa-chart-pie"></i> Distribuição por Status
             </h2>
-            <div className="projects-list">
-              {projects.filter((p) => p.risk === 'Alto' || p.risk === 'Médio').length > 0 ? (
-                projects
-                  .filter((p) => p.risk === 'Alto' || p.risk === 'Médio')
-                  .map((project) => (
-                    <div key={project.id} className="project-card-mini alert">
-                      <h3>{project.name}</h3>
-                      <p>Turma: {project.class} | Risco: <strong>{project.risk}</strong></p>
-                      <span className={`status status-${project.risk.toLowerCase()}`}>{project.risk}</span>
-                    </div>
-                  ))
-              ) : (
-                <p>Nenhum projeto em risco crítico</p>
-              )}
+            <div className="status-breakdown">
+              <div className="status-item">
+                <span className="status-label">Excelente (≥80%)</span>
+                <span className="status-value">{stats?.statusStats?.excellent || 0}</span>
+              </div>
+              <div className="status-item">
+                <span className="status-label">Bom (60-79%)</span>
+                <span className="status-value">{stats?.statusStats?.good || 0}</span>
+              </div>
+              <div className="status-item">
+                <span className="status-label">Médio (40-59%)</span>
+                <span className="status-value">{stats?.statusStats?.medium || 0}</span>
+              </div>
+              <div className="status-item">
+                <span className="status-label">Baixo (&lt;40%)</span>
+                <span className="status-value">{stats?.statusStats?.low || 0}</span>
+              </div>
             </div>
           </div>
 
           <div className="dashboard-section">
             <h2 className="section-title">
-              <i className="fas fa-chart-line"></i> Estatísticas Gerais
+              <i className="fas fa-users-cog"></i> Desempenho dos Professores
             </h2>
-            <div className="projects-summary">
-              <p><strong>Total de Projetos:</strong> {stats?.totalProjects || 0}</p>
-              <p><strong>Em Andamento:</strong> {projects.filter((p) => p.status === 'Em Andamento').length}</p>
-              <p><strong>Em Revisão:</strong> {projects.filter((p) => p.status === 'Em Revisão').length}</p>
-              <p><strong>Concluídos:</strong> {projects.filter((p) => p.status === 'Concluído').length}</p>
-              <p><strong>Taxa de Conclusão:</strong> {stats?.totalProjects ? Math.round((projects.filter((p) => p.status === 'Concluído').length / stats.totalProjects) * 100) : 0}%</p>
+            <div className="teachers-list">
+              {teacherStats && teacherStats.length > 0 ? (
+                teacherStats.slice(0, 5).map((teacher: any, index: number) => (
+                  <div key={index} className="teacher-card">
+                    <p><strong>{teacher.advisor}</strong></p>
+                    <p>Projetos: {teacher.total_projects}</p>
+                    <p>Em Risco: {teacher.projects_at_risk}</p>
+                  </div>
+                ))
+              ) : (
+                <p>Sem dados de professores</p>
+              )}
             </div>
           </div>
         </div>
@@ -256,6 +259,10 @@ export default function DashboardPage() {
   }
 
   // Fallback
-  return <div className="dashboard">Dashboard não disponível</div>;
+  return (
+    <div className="dashboard">
+      <h1>Dashboard</h1>
+      <p>Role não reconhecido</p>
+    </div>
+  );
 }
-

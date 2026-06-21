@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { navigationItems } from '@/config/navigation';
+import { getNavigationItemsByRole } from '@/config/navigationByRole';
 import { useAuthStore } from '@/store';
 import './Sidebar.css';
 
@@ -11,6 +11,10 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
+  const user = useAuthStore((state) => state.user);
+
+  // Obtém itens de navegação baseado no role do usuário
+  const navigationItems = user?.role ? getNavigationItemsByRole(user.role) : [];
 
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -34,6 +38,17 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           <p>Gestão de PI</p>
         </div>
 
+        {/* Badge com role do usuário */}
+        {user && (
+          <div className="user-role-badge">
+            <span className={`role-badge role-${user.role}`}>
+              {user.role === 'student' && '👨‍🎓 Aluno'}
+              {user.role === 'teacher' && '👨‍🏫 Professor'}
+              {user.role === 'coordinator' && '👩‍💼 Coordenador'}
+            </span>
+          </div>
+        )}
+
         <nav className="nav-menu">
           {navigationItems.map((item) => (
             <button
@@ -41,6 +56,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               className="nav-item"
               onClick={() => handleNavigation(item.path)}
               type="button"
+              title={item.label}
             >
               <i className={item.icon}></i>
               <span>{item.label}</span>

@@ -6,6 +6,7 @@ import { errorMiddleware } from '@/middleware';
 import authRoutes from '@/routes/auth';
 import dashboardRoutes from '@/routes/dashboard';
 import projectRoutes from '@/routes/projects';
+import roleBasedDashboardRoutes from '@/routes/roleBasedDashboard';
 import seedRoutes from '@/routes/seed';
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api/role-dashboard', roleBasedDashboardRoutes);
 app.use('/api', seedRoutes);
 
 // Health check
