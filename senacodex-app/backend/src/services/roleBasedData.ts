@@ -12,16 +12,16 @@ import type { IProject, IEvaluation, IActivity } from '@/types';
 export async function getStudentProjects(studentId: string): Promise<IProject[]> {
   // Busca projetos onde o aluno está registrado
   const result = await query(
-    `SELECT * FROM projects WHERE students LIKE $1 OR created_by = $2 ORDER BY created_at DESC`,
-    [`%${studentId}%`, studentId],
+    `SELECT * FROM projects WHERE students LIKE $1 ORDER BY created_at DESC`,
+    [`%${studentId}%`],
   );
   return result.rows.map(mapProjectRow);
 }
 
 export async function getStudentProjectById(projectId: string, studentId: string): Promise<IProject | null> {
   const result = await query(
-    `SELECT * FROM projects WHERE id = $1 AND (students LIKE $2 OR created_by = $3)`,
-    [projectId, `%${studentId}%`, studentId],
+    `SELECT * FROM projects WHERE id = $1 AND students LIKE $2`,
+    [projectId, `%${studentId}%`],
   );
   return result.rows[0] ? mapProjectRow(result.rows[0]) : null;
 }
@@ -31,9 +31,9 @@ export async function getStudentEvaluations(studentId: string): Promise<IEvaluat
   const result = await query(
     `SELECT e.* FROM evaluations e
      INNER JOIN projects p ON e.project_id = p.id
-     WHERE p.students LIKE $1 OR p.created_by = $2
+     WHERE p.students LIKE $1
      ORDER BY e.created_at DESC`,
-    [`%${studentId}%`, studentId],
+    [`%${studentId}%`],
   );
   return result.rows.map(mapEvaluationRow);
 }
@@ -86,7 +86,7 @@ export async function getTeacherStats(professorEmail: string): Promise<any> {
     `SELECT * FROM projects WHERE advisor = $1`,
     [professorEmail],
   );
-  const projects = projectsResult.rows.map(mapProjectRow);
+  const projects: IProject[] = projectsResult.rows.map(mapProjectRow);
   
   const evaluationsResult = await query(
     `SELECT e.* FROM evaluations e
@@ -117,7 +117,7 @@ export async function getTeacherRiskProjects(professorEmail: string): Promise<IP
 
 export async function getCoordinatorStats(): Promise<any> {
   const projectsResult = await query(`SELECT * FROM projects`);
-  const projects = projectsResult.rows.map(mapProjectRow);
+  const projects: IProject[] = projectsResult.rows.map(mapProjectRow);
   
   const evaluationsResult = await query(`SELECT * FROM evaluations`);
   const evaluations = evaluationsResult.rows.map(mapEvaluationRow);
@@ -159,7 +159,7 @@ export async function getCoordinatorClassStatus(classCode: string): Promise<any>
     `SELECT * FROM projects WHERE class = $1 ORDER BY progress DESC`,
     [classCode],
   );
-  const projects = result.rows.map(mapProjectRow);
+  const projects: IProject[] = result.rows.map(mapProjectRow);
 
   return {
     classCode,

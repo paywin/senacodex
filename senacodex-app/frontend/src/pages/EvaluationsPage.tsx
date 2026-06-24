@@ -48,9 +48,9 @@ export default function EvaluationsPage() {
                 {evaluations.map((evaluation) => (
                   <tr key={evaluation.id}>
                     <td>{evaluation.projectName}</td>
-                    <td>{evaluation.reviewer}</td>
-                    <td>{evaluation.score ?? '-'}</td>
-                    <td>{evaluation.comments || '-'}</td>
+                    <td>{evaluation.evaluatedBy}</td>
+                    <td>{evaluation.finalGrade ?? '-'}</td>
+                    <td>{evaluation.feedback || '-'}</td>
                   </tr>
                 ))}
               </tbody>

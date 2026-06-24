@@ -15,7 +15,8 @@
     "build": "npm run build -w frontend && npm run build -w backend",
     "start:frontend": "npm run dev -w frontend",
     "start:backend": "npm run dev -w backend",
-    "install-all": "npm install && npm install -w frontend && npm install -w backend"
+    "install-all": "npm install && npm install -w frontend && npm install -w backend",
+    "setup": "node setup.js"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

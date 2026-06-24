@@ -15,7 +15,7 @@ export const config = {
     expiresIn: process.env.JWT_EXPIRE || '24h',
   },
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    origin: process.env.CORS_ORIGIN || '*',
   },
 };
 

@@ -34,10 +34,13 @@ export interface IEvaluation {
   id: string;
   projectId: string;
   projectName: string;
-  reviewer: string;
-  score: number;
-  comments: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
+  methodology: number;
+  results: number;
+  originality: number;
+  formatting: number;
+  feedback: string;
+  finalGrade?: number;
+  evaluatedBy: string;
   createdAt: string;
 }
 

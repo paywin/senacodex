@@ -28,6 +28,18 @@ export async function seedTestUsers(_req: Request, res: Response): Promise<void>
         password: 'Coordenador@123',
         role: 'coordinator',
       },
+      {
+        name: 'Admin Demo',
+        email: 'admin@example.com',
+        password: 'Admin123',
+        role: 'coordinator',
+      },
+      {
+        name: 'User Demo',
+        email: 'user@example.com',
+        password: 'User123',
+        role: 'student',
+      },
     ];
 
     const createdUsers = [];

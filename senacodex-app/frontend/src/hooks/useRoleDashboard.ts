@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from './useAuth';
-import { api } from '@/services/api';
+import api from '@/services/api';
 
 export interface StudentStats {
   totalProjects: number;
@@ -47,9 +47,7 @@ export function useRoleDashboard() {
     const fetchDashboard = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/role-dashboard/stats', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await api.getRoleDashboardStats();
         setStats(response.data.stats);
         setError(null);
       } catch (err: any) {

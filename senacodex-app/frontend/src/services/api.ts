@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import type { AuthToken } from '@/shared/types';
 
-const API_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:3000/api';
+const API_URL = (import.meta as any).env.VITE_API_URL || '/api';
 
 class ApiService {
   private client: AxiosInstance;
@@ -65,6 +65,22 @@ class ApiService {
 
   getEvaluations() {
     return this.client.get('/dashboard/evaluations');
+  }
+
+  getRoleDashboardStats() {
+    return this.client.get('/role-dashboard/stats');
+  }
+
+  uploadProjectVersion(projectId: string, formData: FormData) {
+    return this.client.post(`/projects/${projectId}/versions`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  }
+
+  getProjectVersions(projectId: string) {
+    return this.client.get(`/projects/${projectId}/versions`);
   }
 }
 

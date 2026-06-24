@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react';
-import ActivityList from '@/components/ui/ActivityList';
 import StatCard from '@/components/ui/StatCard';
 import { useAuth } from '@/hooks/useAuth';
 import api from '@/services/api';
-import type { Activity, Project, Stats } from '@/shared/types';
+import type { Project } from '@/shared/types';
 import './DashboardPage.css';
 
 export default function DashboardPage() {
   const { user, token } = useAuth();
   const [stats, setStats] = useState<any>(null);
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
   const [riskProjects, setRiskProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [teacherStats, setTeacherStats] = useState<any>(null);
@@ -21,22 +18,10 @@ export default function DashboardPage() {
         setLoading(true);
 
         if (user?.role && token) {
-          const roleRes = await api.get('/role-dashboard/stats', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const roleRes = await api.getRoleDashboardStats();
           setStats(roleRes.data.stats);
           if (roleRes.data.riskProjects) setRiskProjects(roleRes.data.riskProjects);
           if (roleRes.data.teacherStats) setTeacherStats(roleRes.data.teacherStats);
-        } else {
-          const [statsRes, activitiesRes, projectsRes] = await Promise.all([
-            api.getStats(),
-            api.getActivities(),
-            api.getProjects(),
-          ]);
-
-          setStats(statsRes.data);
-          setActivities(activitiesRes.data);
-          setProjects(projectsRes.data);
         }
       } catch (error) {
         console.error('Erro ao buscar dados:', error);

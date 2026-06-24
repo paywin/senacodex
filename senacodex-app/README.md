@@ -48,74 +48,40 @@ Sistema de Gerenciamento de Projetos Integradores — full-stack com React, Node
 
 ---
 
-## Instalação
+## Instalação & Inicialização Rápida (Um Comando)
 
-### 1. Preparar o Projeto
-
-```bash
-cd senacodex-app
-# Verifique os arquivos principais: frontend/, backend/, package.json, docker-compose.yml
-```
-
-### 2. Configurar o Backend
+O projeto está configurado para ser inicializado de forma extremamente simples com um script de setup automatizado.
 
 ```bash
-cd backend
-npm install
-cp .env.example .env  # edite se necessário
-npm run dev           # servidor em http://localhost:3000
+# 1. Execute o comando de setup para copiar variáveis de ambiente e instalar dependências
+npm run setup
+
+# 2. Inicie a aplicação
+npm run dev
 ```
-
-### 3. Configurar o Banco de Dados
-
-```bash
-# Verifique se PostgreSQL está rodando
-sudo systemctl status postgresql
-
-# Crie o banco
-sudo -u postgres psql
-CREATE DATABASE senacodex;
-\c senacodex
-# (Opcional) Execute schema.sql para criar tabelas
-\q
-```
-
-### 4. Configurar o Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev  # servidor em http://localhost:5173
-```
+*(Nota: A aplicação possui um fallback automático para banco em memória se o PostgreSQL estiver offline, permitindo o funcionamento imediato do login e das dashboards para teste!)*
 
 ---
 
 ## Quick Start
 
-### Opção 1: Desde a raiz (recomendado)
+### Opção 1: Inicialização em Desenvolvimento (Modo Memória por Padrão se Postgres indisponível)
 
 ```bash
-cd senacodex-app
-npm install
+npm run setup
 npm run dev
 ```
 
-### Opção 2: Separadamente
+### Opção 2: Inicialização Completa com PostgreSQL (Via Docker Compose)
 
-**Terminal 1 — Backend:**
-```bash
-cd backend && npm run dev
-```
-
-**Terminal 2 — Frontend:**
-```bash
-cd frontend && npm run dev
-```
-
-### Opção 3: Docker
+Se preferir usar o PostgreSQL real rodando em container Docker:
 
 ```bash
-docker-compose up
+# 1. Inicie o banco de dados PostgreSQL
+npm run dev:db
+
+# 2. Execute a aplicação (que se conectará ao banco PostgreSQL local)
+npm run dev
 ```
 
 ### Acessar a Aplicação
@@ -126,22 +92,29 @@ docker-compose up
 | Backend API   | http://localhost:3000        |
 | Banco de Dados| localhost:5432               |
 
-### Credenciais Padrão (teste)
+### Credenciais de Demonstração (Contas de Teste)
 
-- Email: `admin@example.com`
-- Senha: `admin123`
+| Perfil | Email | Senha | Descrição |
+|--------|-------|-------|-----------|
+| **Coordenador Demo** | `admin@example.com` | `Admin123` | Acesso completo a turmas, performance de professores e relatórios |
+| **Aluno Demo** | `user@example.com` | `User123` | Acesso a painel de projetos, envio de novas versões e notas |
+| **Aluno Senac** | `aluno@senac.com.br` | `Aluno@123` | Conta padrão de aluno |
+| **Professor Senac** | `professor@senac.com.br` | `Professor@123` | Acesso a gerenciamento de projetos e lançamento de avaliações |
+| **Coordenador Senac** | `coordenador@senac.com.br` | `Coordenador@123` | Conta padrão de coordenador |
 
-> Você também pode registrar um novo usuário na tela de login.
+> Você também pode registrar um novo usuário na tela de login se desejar.
 
 ### Scripts Disponíveis
 
 | Comando                       | Descrição                          |
 |-------------------------------|------------------------------------|
-| `npm run dev`                 | Roda frontend + backend            |
+| `npm run setup`               | Copia `.env.example` -> `.env` e instala dependências |
+| `npm run dev`                 | Roda frontend + backend concorrentemente |
+| `npm run dev:db`              | Sobe o PostgreSQL no Docker em background |
+| `npm run dev:full`            | Sobe o PostgreSQL Docker e roda frontend + backend |
 | `npm run start:frontend`      | Apenas frontend                    |
 | `npm run start:backend`       | Apenas backend                     |
-| `npm run build`               | Build frontend + backend           |
-| `npm run lint`                | Executar linter                    |
+| `npm run build`               | Build de produção para frontend + backend |
 
 #### Backend
 - `npm run dev` — servidor de desenvolvimento
