@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/services/api';
 import type { Project } from '@/shared/types';
+import { Link } from 'react-router-dom';
 import './ProjectsPage.css';
 
 export default function ProjectsPage() {
@@ -56,6 +57,11 @@ export default function ProjectsPage() {
                   <span>{project.class}</span>
                   <span>{project.advisor}</span>
                   <span>{new Date(project.lastUpdate).toLocaleDateString('pt-BR')}</span>
+                </div>
+                <div style={{ marginTop: '15px' }}>
+                  <Link to={`/projetos/${project.id}`} className="btn" style={{ textDecoration: 'none', display: 'inline-block', backgroundColor: '#0056b3', color: 'white', padding: '8px 16px', borderRadius: '4px' }}>
+                    Ver Detalhes / Arquivos
+                  </Link>
                 </div>
               </div>
             ))

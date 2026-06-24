@@ -32,6 +32,7 @@ export async function login(req: Request, res: Response): Promise<void> {
 
     const token = generateToken({
       id: user.id,
+      name: user.name,
       email: user.email,
       role: user.role,
     });
@@ -67,6 +68,7 @@ export async function register(req: Request, res: Response): Promise<void> {
     const user = await createUser(name, email, password, role || 'student');
     const token = generateToken({
       id: user.id,
+      name: user.name,
       email: user.email,
       role: user.role,
     });

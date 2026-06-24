@@ -72,7 +72,7 @@ class ApiService {
   }
 
   uploadProjectVersion(projectId: string, formData: FormData) {
-    return this.client.post(`/projects/${projectId}/versions`, formData, {
+    return this.client.post(`/uploads/${projectId}/versions`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -80,7 +80,31 @@ class ApiService {
   }
 
   getProjectVersions(projectId: string) {
-    return this.client.get(`/projects/${projectId}/versions`);
+    return this.client.get(`/uploads/${projectId}/versions`);
+  }
+
+  getProject(projectId: string) {
+    return this.client.get(`/projects/${projectId}`);
+  }
+
+  evaluateProject(projectId: string, payload: any) {
+    return this.client.post(`/projects/${projectId}/evaluations`, payload);
+  }
+
+  async downloadFile(projectId: string, fileId: string, filename: string) {
+    const response = await this.client.get(`/uploads/${projectId}/files/${fileId}/download`, {
+      responseType: 'blob',
+    });
+    
+    // Trigger download using Blob URL
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
   }
 }
 

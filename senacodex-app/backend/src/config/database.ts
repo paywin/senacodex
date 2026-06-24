@@ -97,9 +97,19 @@ async function createTables(): Promise<void> {
       submission_time VARCHAR(50) NOT NULL,
       grade DECIMAL(3,1),
       notes TEXT,
-      file_url VARCHAR(255),
-      original_name VARCHAR(255),
-      file_size INTEGER,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS project_files (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      project_version_id UUID NOT NULL REFERENCES project_versions(id) ON DELETE CASCADE,
+      original_name VARCHAR(255) NOT NULL,
+      stored_name VARCHAR(255) NOT NULL,
+      file_path VARCHAR(255) NOT NULL,
+      mime_type VARCHAR(100) NOT NULL,
+      file_size INTEGER NOT NULL,
+      checksum VARCHAR(255),
+      created_by UUID NOT NULL REFERENCES users(id),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -127,9 +137,22 @@ async function createTables(): Promise<void> {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
+    CREATE TABLE IF NOT EXISTS audit_logs (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      action VARCHAR(100) NOT NULL,
+      entity_type VARCHAR(100) NOT NULL,
+      entity_id UUID,
+      details TEXT,
+      ip_address VARCHAR(50),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
     CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
     CREATE INDEX IF NOT EXISTS idx_projects_advisor ON projects(advisor);
     CREATE INDEX IF NOT EXISTS idx_activities_user_id ON activities(user_id);
+    CREATE INDEX IF NOT EXISTS idx_project_files_version_id ON project_files(project_version_id);
+    CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);
   `);
 }
 

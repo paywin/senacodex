@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react';
 import api from '@/services/api';
 import './ProjectsPage.css';
 
-export default function SubmitVersionPage() {
+export default function CreateProjectPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [className, setClassName] = useState('T1');

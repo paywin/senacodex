@@ -30,6 +30,31 @@ export interface Activity {
   type: 'update' | 'feedback' | 'alert' | 'deadline';
 }
 
+export interface ProjectFile {
+  id: string;
+  projectVersionId: string;
+  originalName: string;
+  storedName: string;
+  filePath: string;
+  mimeType: string;
+  fileSize: number;
+  checksum?: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface ProjectVersion {
+  id: string;
+  projectId: string;
+  version: string;
+  submissionDate: string;
+  submissionTime: string;
+  grade?: number;
+  notes?: string;
+  createdAt: string;
+  files?: ProjectFile[];
+}
+
 export interface IEvaluation {
   id: string;
   projectId: string;

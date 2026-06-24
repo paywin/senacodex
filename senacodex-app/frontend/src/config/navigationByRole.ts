@@ -32,10 +32,10 @@ export const allNavigationItems: NavigationItem[] = [
     roles: ['student'],
   },
   {
-    id: 'submeter-versao',
-    label: 'Submeter Versão',
-    icon: 'fas fa-upload',
-    path: '/submeter',
+    id: 'criar-projeto',
+    label: 'Criar Projeto',
+    icon: 'fas fa-plus',
+    path: '/projetos/novo',
     roles: ['student'],
   },
   {
@@ -122,7 +122,7 @@ export const pageTitlesByRole: Record<string, Record<UserRole, string>> = {
   '/dashboard': { student: 'Dashboard', teacher: 'Dashboard', coordinator: 'Dashboard' },
   '/projetos': { student: 'Meus Projetos', teacher: 'Gerenciar Projetos', coordinator: 'Projetos' },
   '/projetos-turma': { student: 'Projetos', teacher: 'Gerenciar Projetos', coordinator: 'Projetos' },
-  '/submeter': { student: 'Submeter Versão', teacher: 'Submissões', coordinator: 'Submissões' },
+  '/projetos/novo': { student: 'Criar Projeto', teacher: '', coordinator: '' },
   '/avaliacoes': { student: 'Minhas Avaliações', teacher: 'Avaliar Projetos', coordinator: 'Avaliações' },
   '/relatorios': { student: 'Relatórios', teacher: 'Desempenho dos Alunos', coordinator: 'Relatórios Gerais' },
   '/risco': { student: 'Painel de Risco', teacher: 'Projetos em Risco', coordinator: 'Análise de Riscos' },

@@ -7,7 +7,8 @@ import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
 import DashboardPage from '@/pages/DashboardPage';
 import ProjectsPage from '@/pages/ProjectsPage';
-import SubmitVersionPage from '@/pages/SubmitVersionPage';
+import CreateProjectPage from '@/pages/CreateProjectPage';
+import ProjectDetailsPage from '@/pages/ProjectDetailsPage';
 import EvaluationsPage from '@/pages/EvaluationsPage';
 import ReportsPage from '@/pages/ReportsPage';
 import RiskPanel from '@/pages/RiskPanel';
@@ -32,7 +33,8 @@ function App() {
                   <Route path="/" element={<DashboardPage />} />
                   <Route path="/dashboard" element={<DashboardPage />} />
                   <Route path="/projetos" element={<ProjectsPage />} />
-                  <Route path="/submeter" element={<SubmitVersionPage />} />
+                  <Route path="/projetos/novo" element={<CreateProjectPage />} />
+                  <Route path="/projetos/:id" element={<ProjectDetailsPage />} />
                   <Route path="/avaliacoes" element={<EvaluationsPage />} />
                   <Route path="/relatorios" element={<ReportsPage />} />
                   <Route path="/risco" element={<RiskPanel />} />

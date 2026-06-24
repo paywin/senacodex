@@ -36,6 +36,30 @@ export interface IProjectVersion {
   createdAt: Date;
 }
 
+export interface IProjectFile {
+  id: string;
+  projectVersionId: string;
+  originalName: string;
+  storedName: string;
+  filePath: string;
+  mimeType: string;
+  fileSize: number;
+  checksum?: string;
+  createdBy: string;
+  createdAt: Date;
+}
+
+export interface IAuditLog {
+  id: string;
+  userId: string;
+  action: string;
+  entityType: string;
+  entityId?: string;
+  details?: string;
+  ipAddress?: string;
+  createdAt: Date;
+}
+
 export interface IEvaluation {
   id: string;
   projectId: string;
@@ -62,6 +86,7 @@ export interface IActivity {
 
 export interface JwtPayload {
   id: string;
+  name: string;
   email: string;
   role: string;
 }

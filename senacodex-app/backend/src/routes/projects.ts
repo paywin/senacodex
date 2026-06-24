@@ -9,5 +9,6 @@ router.use(authMiddleware);
 router.get('/', projectController.getProjectsHandler);
 router.get('/:id', projectController.getProjectHandler);
 router.post('/', projectController.createProjectHandler);
+router.post('/:id/evaluations', projectController.createEvaluationHandler);
 
 export default router;

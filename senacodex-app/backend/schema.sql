@@ -78,6 +78,37 @@ CREATE INDEX IF NOT EXISTS idx_project_versions_project_id ON project_versions(p
 CREATE INDEX IF NOT EXISTS idx_evaluations_project_id ON evaluations(project_id);
 CREATE INDEX IF NOT EXISTS idx_activities_user_id ON activities(user_id);
 
+-- Novas tabelas obrigatórias
+
+-- Tabela de Arquivos
+CREATE TABLE IF NOT EXISTS project_files (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_version_id UUID NOT NULL REFERENCES project_versions(id) ON DELETE CASCADE,
+    original_name VARCHAR(255) NOT NULL,
+    stored_name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    mime_type VARCHAR(100) NOT NULL,
+    file_size INTEGER NOT NULL,
+    checksum VARCHAR(255),
+    created_by UUID NOT NULL REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela de Auditoria
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    action VARCHAR(100) NOT NULL,
+    entity_type VARCHAR(100) NOT NULL,
+    entity_id UUID,
+    details TEXT,
+    ip_address VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_project_files_version_id ON project_files(project_version_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);
+
 -- Dados de exemplo (comentados - descomente se quiser)
 -- INSERT INTO users (name, email, password, role) VALUES 
 -- ('Admin', 'admin@example.com', 'hashed_password', 'coordinator'),
